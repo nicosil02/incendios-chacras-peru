@@ -4,7 +4,7 @@ Cruza el área quemada del paso 2 con ESA WorldCover 2021 (10 m, leído a la gri
 clase más frecuente) y cuenta, por clase de cobertura, las hectáreas quemadas y las que quedan a
 1 km o menos de la cicatriz sin quemar. Pone el foco en la clase 40, *Cultivo*.
 
-Entradas: data/cache/caso_dnbr.tif, data/cache/caso_cerca.tif, data/processed/resumen_paso2.json
+Entradas: data/cache/caso_dnbr.tif, data/cache/caso_quemado.tif, data/processed/resumen_paso2.json
 Salidas:  data/processed/que_se_quemo.csv, data/processed/resumen_paso3.json, outputs/cobertura_caso.png
 """
 import json
@@ -23,7 +23,7 @@ from scipy.ndimage import distance_transform_edt
 warnings.filterwarnings("ignore")
 RAIZ = Path(__file__).resolve().parent.parent
 PRO, CACHE, OUT = RAIZ / "data" / "processed", RAIZ / "data" / "cache", RAIZ / "outputs"
-RES, UMBRAL, VECINDAD_M = 20, 0.10, 1000
+RES, VECINDAD_M = 20, 1000
 CLASES = {10: "Árboles", 20: "Matorral", 30: "Pastizal", 40: "Cultivo", 50: "Construido",
           60: "Suelo desnudo", 70: "Nieve", 80: "Agua", 90: "Humedal", 95: "Manglar", 100: "Musgo y liquen"}
 COLORES = {10: "#006400", 20: "#ffbb22", 30: "#ffff4c", 40: "#f096ff", 50: "#fa0000", 60: "#b4b4b4",
@@ -31,7 +31,7 @@ COLORES = {10: "#006400", 20: "#ffbb22", 30: "#ffff4c", 40: "#f096ff", 50: "#fa0
 
 r2 = json.loads((PRO / "resumen_paso2.json").read_text(encoding="utf-8"))
 dnbr = rioxarray.open_rasterio(CACHE / "caso_dnbr.tif").squeeze()
-cerca = rioxarray.open_rasterio(CACHE / "caso_cerca.tif").squeeze().values == 1
+quemado = rioxarray.open_rasterio(CACHE / "caso_quemado.tif").squeeze().values == 1
 
 cat = pystac_client.Client.open("https://planetarycomputer.microsoft.com/api/stac/v1", modifier=pc.sign_inplace)
 items = list(cat.search(collections=["esa-worldcover"], bbox=r2["bbox_wgs84"]).items())
@@ -39,7 +39,6 @@ wc = odc.stac.load(items, bands=["map"], like=dnbr.to_dataset(name="d").odc.geob
 wc = wc["map"].isel(time=-1).values  # versión 2021 (la más reciente)
 
 d = dnbr.values
-quemado = (d >= UMBRAL) & cerca
 vecindad = (distance_transform_edt(~quemado) * RES <= VECINDAD_M) & ~quemado & np.isfinite(d)
 ha = RES * RES / 1e4
 
@@ -56,7 +55,7 @@ t.to_csv(PRO / "que_se_quemo.csv", index=False)
 cult = t.set_index("clase").reindex([40]).fillna(0).iloc[0]
 resumen = {
     "incendio": f"{r2['distrito'].title()}, {r2['provincia'].title()} ({r2['departamento'].title()})",
-    "umbral_dnbr": UMBRAL, "quemado_ha": round(float(t.quemado_ha.sum()), 1),
+    "umbral_dnbr": r2["umbral"], "quemado_ha": round(float(t.quemado_ha.sum()), 1),
     "cobertura_principal": t.cobertura.iat[0], "pct_cobertura_principal": float(t.pct_quemado.iat[0]),
     "cultivo_quemado_ha": float(cult.quemado_ha), "cultivo_a_1km_sin_quemar_ha": float(cult.a_1km_sin_quemar_ha),
     "construido_a_1km_ha": float(t.set_index("clase").a_1km_sin_quemar_ha.get(50, 0)),
@@ -76,7 +75,7 @@ ax.imshow(rgb, extent=ext)
 ax.contour(xs, ys, quemado.astype(int), levels=[0.5], colors="black", linewidths=0.8)
 ax.set_title(f"¿Qué se quemó en {r2['distrito'].title()}? {resumen['pct_cobertura_principal']:.0f} % "
              f"{resumen['cobertura_principal'].lower()}; {resumen['cultivo_a_1km_sin_quemar_ha']:,.0f} ha de "
-             f"cultivo a ≤ 1 km\nESA WorldCover 2021, contorno negro = área quemada (dNBR ≥ 0,10)", fontsize=10)
+             f"cultivo a ≤ 1 km\nESA WorldCover 2021, contorno negro = área quemada (dNBR ≥ {r2['umbral']:.2f})", fontsize=10)
 ax.set_axis_off()
 from matplotlib.patches import Patch  # noqa: E402
 presentes = [c for c in CLASES if (wc == c).any()]

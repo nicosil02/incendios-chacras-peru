@@ -12,8 +12,8 @@ Cuando arde un incendio en el Perú, ¿qué es lo que se quema: pastizal, matorr
 
 ## Tres hallazgos
 
-1. **Lo que ardió fue sobre todo matorral, pero el fuego llegó al borde de las chacras.** Se quemaron **196 ha** (dNBR ≥ 0,10): 67 % matorral, 23 % pastizal y **17 ha de cultivo (8,5 %)**, sobre todo en el borde norte, donde empieza la campiña. A 1 km o menos de la cicatriz quedan **104 ha de cultivo** y 11 ha construidas sin quemar.
-2. **El umbral de siempre casi no ve este incendio.** Con dNBR ≥ 0,27 salen solo **6 ha**. El 97 % de lo quemado es de severidad baja (Key y Benson, 2006): en el matorral seco hay poca vegetación que perder y el índice cambia poco aunque el fuego pase. Por eso la cifra principal usa 0,10.
+1. **Lo que ardió fue sobre todo matorral, pero el fuego llegó al borde de las chacras.** Se quemaron **153 ha**: 71 % matorral, 23 % pastizal y **7 ha de cultivo (5 %)**, en el borde norte de la cicatriz, junto a la zona construida. A 1 km o menos quedan **65 ha de cultivo** y 5 ha construidas sin quemar.
+2. **El umbral de siempre casi no ve este incendio, y uno más bajo cuenta ruido.** Con dNBR ≥ 0,27 salen menos de **2 ha**: el 92 % de lo quemado es de severidad baja (Key y Benson, 2006), porque en el matorral seco hay poca vegetación que perder. Pero bajar a 0,10 sin más tampoco sirve: a más de 3 km del fuego, el **6,1 % de los píxeles ya pasa de 0,10** por el secado. Por eso el umbral sale del propio fondo (percentil 95 = 0,109) y solo cuentan manchas continuas que tocan un foco. Contando píxel por píxel a 1,5 km de los focos habrían salido 196 ha, un 29 % más.
 3. **Las nubes deciden qué incendios se pueden medir.** De seis incendios de la sierra probados, cuatro (Tapo, San Juan de Jarpa, Cayna y Vilcas Huamán) no tuvieron ninguna imagen Sentinel-2 limpia después del fuego, y en Caja la mejor tenía el 27 % de la zona tapada ([`candidatos_caso.csv`](data/processed/candidatos_caso.csv)). Characato se pudo medir porque Arequipa sigue despejada en octubre.
 
 En todo el Perú hubo **7 198 focos** limpios y **2 173 incendios** en la semana (171 activos al corte); Ucayali, Junín y Huánuco concentran la mitad de los focos.
@@ -32,7 +32,7 @@ En todo el Perú hubo **7 198 focos** limpios y **2 173 incendios** en la semana
 ## Método
 
 1. **Focos → incendios** (`src/01_incendios.py`): focos del Perú sin confianza baja ni volcanes (Sabancaya, Ubinas, Misti); los que están a ≤ 1 km y ≤ 48 h forman un incendio. Huella = unión de píxeles de 375 m (no es área quemada).
-2. **Área quemada** (`src/02_dnbr.py`): escenas elegidas por el % de píxeles válidos en la zona según la capa SCL, no por la nubosidad de la escena. NBR = (B8A − B12)/(B8A + B12) en reflectancia (restando el +1000 de la baseline ≥ 04.00), dNBR = NBR antes − NBR después, máscara de nubes, sombra, agua y nieve. Se cuenta lo quemado a ≤ 1,5 km de algún foco.
+2. **Área quemada** (`src/02_dnbr.py`): escenas elegidas por el % de píxeles válidos en la zona según la capa SCL, no por la nubosidad de la escena. NBR = (B8A − B12)/(B8A + B12) en reflectancia (restando el +1000 de la baseline ≥ 04.00), dNBR = NBR antes − NBR después, máscara de nubes, sombra, agua y nieve. **Umbral** = el mayor entre 0,10 y el percentil 95 del dNBR a más de 3 km de los focos (el ruido de fondo); mediana de 3×3 y solo manchas continuas de ≥ 1 ha que tocan un foco (a ≤ 375 m), como en los trabajos de Luis Guevara y Josué Soria.
 3. **¿Qué se quemó?** (`src/03_que_se_quemo.py`): área quemada × WorldCover (clase más frecuente a 20 m) y cobertura a ≤ 1 km de la cicatriz.
 4. **Página web** (`src/04_web.py`): rellena `web/plantilla.html` con las cifras y genera `docs/index.html`.
 
@@ -50,7 +50,7 @@ python src/04_web.py
 ## Limitaciones
 
 - **Un foco de calor no es un incendio forestal**: incluye quemas agrícolas y de pastos.
-- **En cultivo, el dNBR también sube con la cosecha o el arado**, así que las 17 ha de cultivo quemado son un máximo.
+- **En cultivo, el dNBR también sube con la cosecha o el arado**, así que las 7 ha de cultivo quemado son un máximo (aunque entre las dos imágenes hay solo 3 días).
 - **WorldCover es de 2021** y en la sierra confunde chacras con pastizal.
-- **Umbral 0,10**: el secado de la vegetación puede sumar algo de falso quemado; lo acota que la imagen de antes es de un día antes del fuego y que solo cuento lo que está cerca de los focos.
+- **Umbral bajo**: dentro de las manchas puede quedar algo de secado; lo acotan el umbral sacado del fondo y que la imagen de antes es de un día antes del fuego.
 - **Un solo incendio**: las nubes no dejaron medir los otros candidatos de la sierra.

@@ -33,7 +33,7 @@ r1, r2, r3 = leer("resumen_paso1.json"), leer("resumen_paso2.json"), leer("resum
 t = pd.read_csv(PRO / "que_se_quemo.csv")
 corte = pd.Timestamp(r1["corte_utc"], tz="UTC").tz_convert("America/Lima")
 sev = r2["severidad_ha"]
-quemado = sum(v for k, v in sev.items() if k != "No quemado")
+quemado = sum(sev.values())
 
 maximo = t.quemado_ha.max()
 barras = "".join(
@@ -58,7 +58,10 @@ valores = {
     "cult_q": num(r3["cultivo_quemado_ha"]),
     "cult_v": num(r3["cultivo_a_1km_sin_quemar_ha"]),
     "constr_v": num(r3["construido_a_1km_ha"]),
-    "q027": num(r2["quemado_ha_dnbr_027"]),
+    "q027": num(r2["quemado_ha_manchas_027"], 1),
+    "q_pixel": num(r2["quemado_ha_pixel_010_a_1500m"]),
+    "umbral": num(r2["umbral"], 2),
+    "pct_fondo": num(r2["pct_fondo_sobre_010"], 1),
     "pct_baja": num(100 * sev["Baja"] / quemado),
     "focos": num(r1["focos_limpios"]),
     "incendios": num(r1["incendios"]),

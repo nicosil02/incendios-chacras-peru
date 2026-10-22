@@ -83,7 +83,7 @@ a:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
   </header>
 
   <section class="cifras" aria-label="Cifras clave">
-    <div class="cifra"><b>{{quemado}} ha</b><span>quemadas (dNBR ≥ 0,10)</span></div>
+    <div class="cifra"><b>{{quemado}} ha</b><span>quemadas (dNBR ≥ {{umbral}})</span></div>
     <div class="cifra"><b>{{pct_principal}} %</b><span>de lo quemado era {{principal}}</span></div>
     <div class="cifra"><b>{{cult_q}} ha</b><span>de cultivo quemado</span></div>
     <div class="cifra"><b>{{cult_v}} ha</b><span>de cultivo a ≤ 1 km de la cicatriz, sin quemar</span></div>
@@ -93,7 +93,7 @@ a:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
     <span class="etiqueta">Hallazgos</span>
     <ol class="hallazgos">
       <li><div><p><strong>Lo que ardió fue sobre todo matorral, pero el fuego llegó al borde de las chacras.</strong> De las {{quemado}} ha, el {{pct_principal}} % era matorral y el {{pct_pastizal}} % pastizal. Solo {{cult_q}} ha eran cultivo, sobre todo en el borde norte de la cicatriz, donde empieza la campiña. A 1 km o menos quedan {{cult_v}} ha de cultivo y {{constr_v}} ha construidas que no se quemaron.</p></div></li>
-      <li><div><p><strong>El umbral de siempre casi no ve este incendio.</strong> Con dNBR ≥ 0,27 salen apenas {{q027}} ha. El {{pct_baja}} % de lo quemado es de severidad baja: en el matorral seco de Arequipa hay poca vegetación que perder, así que el índice cambia poco aunque el fuego pase. Por eso uso 0,10 como cifra principal.</p></div></li>
+      <li><div><p><strong>El umbral de siempre casi no ve este incendio, y uno más bajo cuenta ruido.</strong> Con dNBR ≥ 0,27 salen apenas {{q027}} ha: el {{pct_baja}} % de lo quemado es de severidad baja, porque en el matorral seco hay poca vegetación que perder. Pero bajar a 0,10 sin más tampoco sirve: lejos del fuego, el {{pct_fondo}} % de los píxeles ya pasa de 0,10 por el secado. Por eso el umbral sale del propio fondo ({{umbral}}) y solo cuentan manchas continuas que tocan un foco. Contando píxel por píxel habrían salido {{q_pixel}} ha.</p></div></li>
       <li><div><p><strong>Las nubes deciden qué incendios se pueden medir.</strong> Probé seis incendios de la sierra. En Tapo, San Juan de Jarpa, Cayna y Vilcas Huamán no hubo una imagen limpia después del fuego, y en Caja la mejor tenía el 27 % de la zona tapada. Characato se pudo medir porque Arequipa sigue despejada en octubre. En el país hubo {{focos}} focos y {{incendios}} incendios en la semana.</p></div></li>
     </ol>
   </section>
@@ -102,7 +102,7 @@ a:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
     <h2>El área quemada</h2>
     <figure>
       <img src="{{img_dnbr}}" alt="Mapa del dNBR en Characato: una mancha de severidad baja alrededor de los focos VIIRS, con pequeños núcleos de severidad moderada">
-      <figcaption>dNBR entre el {{antes}} y el {{despues}} (Sentinel-2, 20 m, {{valido}} % de la zona sin nubes). Los puntos azules son los {{focos_caso}} focos VIIRS del 18 y 19 de octubre. Solo cuenta lo que está a 1,5 km o menos de algún foco.</figcaption>
+      <figcaption>dNBR entre el {{antes}} y el {{despues}} (Sentinel-2, 20 m, {{valido}} % de la zona sin nubes). Los puntos azules son los {{focos_caso}} focos VIIRS del 18 y 19 de octubre. Solo se colorean las manchas de 1 ha o más que tocan un foco.</figcaption>
     </figure>
   </section>
 
@@ -123,7 +123,7 @@ a:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
 
   <section class="seccion">
     <h2>Datos y método</h2>
-    <p>Focos VIIRS de NASA FIRMS (S-NPP, NOAA-20 y NOAA-21, 7 días), sin confianza baja, agrupados en incendios cuando están a 1 km o menos y a 48 horas o menos. Imágenes Sentinel-2 L2A de Microsoft Planetary Computer, elegidas por el porcentaje de píxeles válidos dentro de la zona según la capa SCL. NBR = (B8A − B12)/(B8A + B12), dNBR = NBR antes − NBR después, severidad según Key y Benson (2006). Cobertura de ESA WorldCover 2021.</p>
+    <p>Focos VIIRS de NASA FIRMS (S-NPP, NOAA-20 y NOAA-21, 7 días), sin confianza baja, agrupados en incendios cuando están a 1 km o menos y a 48 horas o menos. Imágenes Sentinel-2 L2A de Microsoft Planetary Computer, elegidas por el porcentaje de píxeles válidos dentro de la zona según la capa SCL. NBR = (B8A − B12)/(B8A + B12), dNBR = NBR antes − NBR después. Umbral = el mayor entre 0,10 y el percentil 95 del dNBR a más de 3 km de los focos; mediana de 3×3 y manchas de 1 ha o más que tocan un foco (a ≤ 375 m). Severidad según Key y Benson (2006). Cobertura de ESA WorldCover 2021.</p>
     <p class="nota">Código y datos: <a href="https://github.com/nicosil02/incendios-chacras-peru">github.com/nicosil02/incendios-chacras-peru</a></p>
   </section>
 
@@ -133,7 +133,7 @@ a:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
       <li>Un foco de calor no es un incendio forestal: incluye quemas agrícolas y de pastos.</li>
       <li>En cultivo, el dNBR también sube con la cosecha o el arado. Las {{cult_q}} ha de cultivo quemado son un máximo.</li>
       <li>WorldCover es de 2021 y en la sierra confunde chacras con pastizal.</li>
-      <li>Con un umbral de 0,10 el secado de la vegetación puede sumar algo; por eso la imagen de antes es de un día antes del fuego.</li>
+      <li>El umbral bajo puede sumar algo de secado dentro de las manchas; lo acotan el umbral sacado del fondo y que la imagen de antes es de un día antes del fuego.</li>
     </ul>
   </section>
 
