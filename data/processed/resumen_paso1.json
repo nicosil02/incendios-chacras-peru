@@ -1,0 +1,12 @@
+{
+  "corte_utc": "2026-10-22 06:22",
+  "desde_utc": "2026-10-15 05:14",
+  "focos_sudamerica": 158169,
+  "focos_peru": 8397,
+  "descartados_confianza_baja": 1199,
+  "descartados_volcanes": 0,
+  "focos_limpios": 7198,
+  "incendios": 2173,
+  "incendios_3_focos_o_mas": 661,
+  "incendios_activos_24h": 171
+}
