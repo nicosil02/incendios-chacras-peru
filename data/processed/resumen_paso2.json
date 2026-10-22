@@ -1,0 +1,29 @@
+{
+  "incendio": 971,
+  "distrito": "CHARACATO",
+  "provincia": "AREQUIPA",
+  "departamento": "AREQUIPA",
+  "focos": 31,
+  "inicio": "2026-10-18 12:34",
+  "fin": "2026-10-19 00:40",
+  "huella_viirs_ha": 243.6,
+  "escena_antes": "2026-10-17",
+  "escena_despues": "2026-10-20",
+  "recuadro_km2": 48.7,
+  "pct_valido_zona": 99.9,
+  "quemado_ha_dnbr_027": 6.4,
+  "quemado_ha_dnbr_010": 196.1,
+  "severidad_ha": {
+    "No quemado": 1573.0,
+    "Baja": 189.8,
+    "Moderada-baja": 6.2,
+    "Moderada-alta": 0.1,
+    "Alta": 0.0
+  },
+  "bbox_wgs84": [
+    -71.38894,
+    -16.48259,
+    -71.32375,
+    -16.42202
+  ]
+}
