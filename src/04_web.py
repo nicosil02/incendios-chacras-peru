@@ -79,5 +79,10 @@ for k, v in valores.items():
     html = html.replace("{{" + k + "}}", str(v))
 assert "{{" not in html, "quedó un campo sin rellenar"
 (RAIZ / "docs").mkdir(exist_ok=True)
-(RAIZ / "docs" / "index.html").write_text(html, encoding="utf-8")
+(RAIZ / "web" / "artefacto.html").write_text(html, encoding="utf-8")  # para la web en Claude
+# GitHub Pages necesita el documento completo
+cabeza = ('<!doctype html>\n<html lang="es">\n<head>\n<meta charset="utf-8">\n'
+          '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n')
+pagina = cabeza + html.replace("<main", '</head>\n<body style="margin:0">\n<main', 1) + "\n</body>\n</html>\n"
+(RAIZ / "docs" / "index.html").write_text(pagina, encoding="utf-8")
 print(f"docs/index.html: {len(html) / 1e6:.2f} MB")
