@@ -1,0 +1,10 @@
+{
+  "incendio": "Characato, Arequipa (Arequipa)",
+  "umbral_dnbr": 0.1,
+  "quemado_ha": 196.1,
+  "cobertura_principal": "Matorral",
+  "pct_cobertura_principal": 66.7,
+  "cultivo_quemado_ha": 16.6,
+  "cultivo_a_1km_sin_quemar_ha": 103.9,
+  "construido_a_1km_ha": 10.6
+}
