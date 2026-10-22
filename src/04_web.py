@@ -1,7 +1,7 @@
 """Paso 4 · Página web autocontenida con los resultados.
 
 Rellena web/plantilla.html con las cifras de los pasos 1 a 3 y mete los mapas como imágenes
-embebidas, para que la página funcione sola (artefacto web o GitHub Pages).
+embebidas, para que la página funcione sola. El visor interactivo usa web/datos_visor.json (paso 5).
 
 Salida: docs/index.html
 """
@@ -51,7 +51,7 @@ filas = "".join(
 pct = t.set_index("cobertura").pct_quemado
 valores = {
     "corte": corte.strftime("%d/%m/%Y %H:%M"),
-    "quemado": num(r3["quemado_ha"]),
+    "quemado": num(r2["quemado_ha"] + 1e-9),  # 152,5 ha → 153, como en el README
     "pct_principal": num(r3["pct_cobertura_principal"]),
     "principal": r3["cobertura_principal"].lower(),
     "pct_pastizal": num(pct.get("Pastizal", 0)),
@@ -70,6 +70,8 @@ valores = {
     "valido": num(r2["pct_valido_zona"], 1),
     "focos_caso": r2["focos"],
     "barras": barras,
+    "umbral_punto": f"{r2['umbral']:.3f}",
+    "datos": (RAIZ / "web" / "datos_visor.json").read_text(encoding="utf-8"),
     "filas": filas,
     "img_dnbr": img("dnbr_caso.png"),
     "img_cob": img("cobertura_caso.png"),

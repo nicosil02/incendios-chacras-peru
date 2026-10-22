@@ -1,6 +1,6 @@
 # ¿Qué se quemó? Incendios y chacras en el Perú, octubre 2026
 
-Sesión 14 · Ciencia de Datos con Python · Nicolás Silva Andújar (@nicosil02) · reto **C (¿qué se quemó?)**
+Sesión 14 · Python Intermedio · Nicolás Silva Andújar (@nicosil02) · reto **C (¿qué se quemó?)**
 
 **Página web:** https://claude.ai/artifact/QQcz7dxPZ7NF5BUwVzEYPF (copia en [`docs/index.html`](docs/index.html))
 
