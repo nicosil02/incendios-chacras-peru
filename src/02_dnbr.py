@@ -3,8 +3,9 @@
 Busca escenas Sentinel-2 L2A en Microsoft Planetary Computer alrededor del incendio elegido y escoge
 la de antes y la de después por el % de píxeles válidos *dentro de la zona* (capa SCL), no por la
 nubosidad de la escena completa. Calcula NBR = (B8A − B12)/(B8A + B12), dNBR = NBR antes − NBR
-después, enmascara nubes, sombras, agua y nieve, y cuenta como quemado lo que tiene dNBR ≥ 0,27 y
-cae a 1,5 km o menos de algún foco del incendio.
+después y enmascara nubes, sombras, agua y nieve. Para no contar ruido, el umbral de quemado es el
+mayor entre 0,10 y el percentil 95 del dNBR lejos del fuego (a más de 3 km de los focos), se suaviza
+con una mediana de 3×3 y solo cuentan las manchas de 1 ha o más que tocan un foco (a ≤ 375 m).
 
 Uso:      python src/02_dnbr.py <id_incendio>
 Entradas: data/processed/incendios.csv, data/processed/focos.csv
@@ -26,7 +27,7 @@ import pystac_client
 import rioxarray  # noqa: F401  (activa .rio en xarray)
 from matplotlib.colors import BoundaryNorm, ListedColormap
 from matplotlib.patches import Patch
-from scipy.ndimage import distance_transform_edt
+from scipy.ndimage import distance_transform_edt, label, median_filter
 
 warnings.filterwarnings("ignore")
 RAIZ = Path(__file__).resolve().parent.parent
@@ -37,7 +38,7 @@ OUT.mkdir(exist_ok=True)
 UTM, RES = "EPSG:32718", 20  # B8A y B12 vienen a 20 m
 MARGEN_M = 2500  # recuadro: focos del incendio + 2,5 km
 VALIDO_MIN = float(sys.argv[2]) if len(sys.argv) > 2 else 0.80  # mínimo de píxeles válidos en la zona
-UMBRAL, CERCA_M = 0.27, 1500
+UMBRAL_MIN, LEJOS_M, TOCA_M, MANCHA_MIN_HA = 0.10, 3000, 375, 1.0
 SCL_INVALIDO = [0, 1, 3, 6, 8, 9, 10, 11]  # sin dato, saturado, sombra, agua, nubes, cirros, nieve
 SEVERIDAD = [(-1, 0.10, "No quemado"), (0.10, 0.27, "Baja"), (0.27, 0.44, "Moderada-baja"),
              (0.44, 0.66, "Moderada-alta"), (0.66, 2, "Alta")]  # Key y Benson (2006)
@@ -108,15 +109,31 @@ foco = np.zeros(dnbr.shape, bool)
 fi = np.clip(np.searchsorted(-ys, -pts.y.values), 0, len(ys) - 1)
 fj = np.clip(np.searchsorted(xs, pts.x.values), 0, len(xs) - 1)
 foco[fi, fj] = True
-cerca = distance_transform_edt(~foco) * RES <= CERCA_M
-
-quemado = (dnbr.values >= UMBRAL) & cerca
+dist = distance_transform_edt(~foco) * RES
+v = dnbr.values
 ha_pix = RES * RES / 1e4
-sev = {nombre: round(float(((dnbr.values >= lo) & (dnbr.values < hi) & cerca).sum() * ha_pix), 1)
-       for lo, hi, nombre in SEVERIDAD}
+
+# Ruido de fondo: cuánto "cambia" el dNBR donde no hubo fuego (secado, diferencias entre fechas)
+fondo = v[(dist > LEJOS_M) & np.isfinite(v)]
+p95_fondo = float(np.percentile(fondo, 95))
+umbral = max(UMBRAL_MIN, p95_fondo)
+
+
+def manchas(u):
+    """Píxeles de las manchas continuas con dNBR ≥ u (mediana 3×3) de ≥ 1 ha que tocan un foco."""
+    m = median_filter(np.where(np.isfinite(v), v, -1), 3) >= u
+    lab, _ = label(m, structure=np.ones((3, 3)))
+    tam = np.bincount(lab.ravel()) * ha_pix
+    toca = np.unique(lab[m & (dist <= TOCA_M)])
+    return np.isin(lab, [k for k in toca if k > 0 and tam[k] >= MANCHA_MIN_HA])
+
+
+quemado = manchas(umbral)
+sev = {nombre: round(float((quemado & (v >= lo) & (v < hi)).sum() * ha_pix), 1)
+       for lo, hi, nombre in SEVERIDAD if nombre != "No quemado"}
 
 dnbr.rio.write_crs(UTM).rio.to_raster(CACHE / "caso_dnbr.tif")
-dnbr.copy(data=np.where(cerca, 1, 0).astype("uint8")).rio.write_crs(UTM).rio.to_raster(CACHE / "caso_cerca.tif")
+dnbr.copy(data=quemado.astype("uint8")).rio.write_crs(UTM).rio.to_raster(CACHE / "caso_quemado.tif")
 
 resumen = {
     "incendio": caso, "distrito": inc.distrito, "provincia": inc.provincia, "departamento": inc.departamento,
@@ -124,8 +141,11 @@ resumen = {
     "huella_viirs_ha": float(inc.huella_ha), "escena_antes": f_antes, "escena_despues": f_despues,
     "recuadro_km2": round(dnbr.size * ha_pix / 100, 1),
     "pct_valido_zona": round(100 * valido.mean(), 1),
-    "quemado_ha_dnbr_027": round(float(quemado.sum() * ha_pix), 1),
-    "quemado_ha_dnbr_010": round(float(((dnbr.values >= 0.10) & cerca).sum() * ha_pix), 1),
+    "dnbr_fondo_p95": round(p95_fondo, 3), "pct_fondo_sobre_010": round(100 * float((fondo >= 0.10).mean()), 1),
+    "umbral": round(umbral, 3),
+    "quemado_ha": round(float(quemado.sum() * ha_pix), 1),
+    "quemado_ha_manchas_027": round(float(manchas(0.27).sum() * ha_pix), 1),
+    "quemado_ha_pixel_010_a_1500m": round(float(((v >= 0.10) & (dist <= 1500)).sum() * ha_pix), 1),
     "severidad_ha": sev, "bbox_wgs84": [round(v, 5) for v in bbox],
 }
 (PRO / "resumen_paso2.json").write_text(json.dumps(resumen, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -135,12 +155,11 @@ print(json.dumps(resumen, indent=2, ensure_ascii=False))
 colores = ["#d9d9d9", "#fee391", "#fe9929", "#d7301f", "#67000d"]
 fig, ax = plt.subplots(figsize=(8, 7))
 ext = [xs.min(), xs.max(), ys.min(), ys.max()]
-ax.imshow(dnbr.values, extent=ext, cmap=ListedColormap(colores),
+ax.imshow(np.where(quemado, v, -0.5), extent=ext, cmap=ListedColormap(colores),
           norm=BoundaryNorm([-1, 0.10, 0.27, 0.44, 0.66, 2], 5))
 ax.scatter(pts.x, pts.y, s=6, c="#2b8cbe", label="Focos VIIRS")
-ax.set_title(f"{inc.distrito.title()} ({inc.departamento.title()}): {resumen['quemado_ha_dnbr_010']:,.0f} ha quemadas "
-             f"(dNBR ≥ 0,10), {resumen['quemado_ha_dnbr_027']:,.0f} ha con dNBR ≥ 0,27\n"
-             f"Sentinel-2 {f_antes} → {f_despues}", fontsize=11)
+ax.set_title(f"{inc.distrito.title()} ({inc.departamento.title()}): {resumen['quemado_ha']:,.0f} ha quemadas "
+             f"(dNBR ≥ {umbral:.2f}, manchas que tocan un foco)\nSentinel-2 {f_antes} → {f_despues}", fontsize=11)
 ax.set_axis_off()
 manijas = [Patch(color=c, label=nombre) for (_, _, nombre), c in zip(SEVERIDAD, colores)]
 ax.legend(handles=[ax.collections[0], *manijas], loc="lower left", fontsize=8)

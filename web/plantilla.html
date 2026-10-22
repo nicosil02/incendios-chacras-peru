@@ -1,0 +1,141 @@
+<title>Lo que ardió en Characato</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Informe de una sola columna, como una ficha de campo: cifras clave, mapas y tablas en orden de lectura */
+:root {
+  --bg: #f5f4f1;
+  --panel: #ffffff;
+  --fg: #23211f;
+  --muted: #6b655e;
+  --line: #ddd8d0;
+  --ember: #c2410c;
+  --crop: #a21caf;
+  --scrub: #d49a12;
+  --grass: #c9b92e;
+  --display: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #171513; --panel: #211e1b; --fg: #ece7e0; --muted: #a59d93; --line: #3a3530;
+    --ember: #f07a3c; --crop: #e07ae8; --scrub: #e5b23a; --grass: #d8cb52; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #171513; --panel: #211e1b; --fg: #ece7e0; --muted: #a59d93; --line: #3a3530;
+  --ember: #f07a3c; --crop: #e07ae8; --scrub: #e5b23a; --grass: #d8cb52; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font: 400 1.0625rem/1.6 var(--body); }
+.envoltura {
+  max-width: 54rem; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 2.5rem 4rem;
+  display: grid; gap: 2.75rem;
+}
+.etiqueta { font: 500 0.75rem/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+h1, h2 { font-family: var(--display); font-weight: 700; line-height: 1.05; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.4rem, 7vw, 3.75rem); }
+h1 em { font-style: normal; color: var(--ember); }
+h2 { font-size: 1.75rem; font-weight: 600; }
+p { margin: 0; max-width: 65ch; }
+.cabecera { display: grid; gap: 0.9rem; }
+.bajada { font-size: 1.15rem; color: var(--muted); }
+.cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.cifra { background: var(--panel); padding: 1rem 1.1rem; display: grid; gap: 0.25rem; align-content: start; }
+.cifra b { font: 600 2.1rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.cifra span { font-size: 0.9rem; color: var(--muted); line-height: 1.35; }
+.seccion { display: grid; gap: 1rem; }
+.hallazgos { display: grid; gap: 1.1rem; margin: 0; padding: 0; list-style: none; counter-reset: h; }
+.hallazgos li { display: grid; grid-template-columns: 2.2rem 1fr; gap: 0.6rem; counter-increment: h; }
+.hallazgos li::before { content: counter(h); font: 700 1.6rem/1 var(--display); color: var(--ember); }
+.hallazgos li > div { min-width: 0; }
+figure { margin: 0; display: grid; gap: 0.5rem; }
+figure img { width: 100%; height: auto; border: 1px solid var(--line); background: #fff; }
+figcaption { font-size: 0.9rem; color: var(--muted); }
+.barras { display: grid; gap: 0.55rem; }
+.barra { display: grid; grid-template-columns: 7.5rem 1fr 4.5rem; gap: 0.75rem; align-items: center; font-size: 0.95rem; }
+.barra .pista { height: 0.9rem; background: var(--line); }
+.barra .relleno { height: 100%; }
+.barra .valor { font: 400 0.9rem var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+.tabla { overflow-x: auto; border: 1px solid var(--line); background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+th, td { padding: 0.55rem 0.8rem; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font: 500 0.75rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+tr:last-child td { border-bottom: 0; }
+.nota { font-size: 0.95rem; color: var(--muted); }
+ul.limites { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.45rem; max-width: 65ch; }
+a { color: var(--ember); }
+a:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+@media (max-width: 30rem) { .barra { grid-template-columns: 5.5rem 1fr 3.8rem; } }
+</style>
+
+<main class="envoltura">
+  <header class="cabecera">
+    <span class="etiqueta">Sesión 14 · Reto C · Corte {{corte}} (hora de Lima)</span>
+    <h1>¿Qué se quemó en <em>Characato</em>?</h1>
+    <p class="bajada">El 18 de octubre ardió el matorral al este de Arequipa, al borde de la campiña. Medí la cicatriz con Sentinel-2 y la crucé con el mapa de cobertura de la ESA para ver si el fuego alcanzó chacras.</p>
+  </header>
+
+  <section class="cifras" aria-label="Cifras clave">
+    <div class="cifra"><b>{{quemado}} ha</b><span>quemadas (dNBR ≥ {{umbral}})</span></div>
+    <div class="cifra"><b>{{pct_principal}} %</b><span>de lo quemado era {{principal}}</span></div>
+    <div class="cifra"><b>{{cult_q}} ha</b><span>de cultivo quemado</span></div>
+    <div class="cifra"><b>{{cult_v}} ha</b><span>de cultivo a ≤ 1 km de la cicatriz, sin quemar</span></div>
+  </section>
+
+  <section class="seccion">
+    <span class="etiqueta">Hallazgos</span>
+    <ol class="hallazgos">
+      <li><div><p><strong>Lo que ardió fue sobre todo matorral, pero el fuego llegó al borde de las chacras.</strong> De las {{quemado}} ha, el {{pct_principal}} % era matorral y el {{pct_pastizal}} % pastizal. Solo {{cult_q}} ha eran cultivo, sobre todo en el borde norte de la cicatriz, donde empieza la campiña. A 1 km o menos quedan {{cult_v}} ha de cultivo y {{constr_v}} ha construidas que no se quemaron.</p></div></li>
+      <li><div><p><strong>El umbral de siempre casi no ve este incendio, y uno más bajo cuenta ruido.</strong> Con dNBR ≥ 0,27 salen apenas {{q027}} ha: el {{pct_baja}} % de lo quemado es de severidad baja, porque en el matorral seco hay poca vegetación que perder. Pero bajar a 0,10 sin más tampoco sirve: lejos del fuego, el {{pct_fondo}} % de los píxeles ya pasa de 0,10 por el secado. Por eso el umbral sale del propio fondo ({{umbral}}) y solo cuentan manchas continuas que tocan un foco. Contando píxel por píxel habrían salido {{q_pixel}} ha.</p></div></li>
+      <li><div><p><strong>Las nubes deciden qué incendios se pueden medir.</strong> Probé seis incendios de la sierra. En Tapo, San Juan de Jarpa, Cayna y Vilcas Huamán no hubo una imagen limpia después del fuego, y en Caja la mejor tenía el 27 % de la zona tapada. Characato se pudo medir porque Arequipa sigue despejada en octubre. En el país hubo {{focos}} focos y {{incendios}} incendios en la semana.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="seccion">
+    <h2>El área quemada</h2>
+    <figure>
+      <img src="{{img_dnbr}}" alt="Mapa del dNBR en Characato: una mancha de severidad baja alrededor de los focos VIIRS, con pequeños núcleos de severidad moderada">
+      <figcaption>dNBR entre el {{antes}} y el {{despues}} (Sentinel-2, 20 m, {{valido}} % de la zona sin nubes). Los puntos azules son los {{focos_caso}} focos VIIRS del 18 y 19 de octubre. Solo se colorean las manchas de 1 ha o más que tocan un foco.</figcaption>
+    </figure>
+  </section>
+
+  <section class="seccion">
+    <h2>Qué cobertura había donde ardió</h2>
+    <div class="barras" role="list">{{barras}}</div>
+    <figure>
+      <img src="{{img_cob}}" alt="Mapa de ESA WorldCover con el contorno del área quemada: el fuego cubre matorral y pastizal y toca parches de cultivo al norte">
+      <figcaption>ESA WorldCover 2021 (10 m, leído a 20 m). El contorno negro es el área quemada; el rosado es cultivo.</figcaption>
+    </figure>
+    <div class="tabla">
+      <table>
+        <thead><tr><th>Cobertura</th><th>Quemado (ha)</th><th>% de lo quemado</th><th>A ≤ 1 km sin quemar (ha)</th></tr></thead>
+        <tbody>{{filas}}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <h2>Datos y método</h2>
+    <p>Focos VIIRS de NASA FIRMS (S-NPP, NOAA-20 y NOAA-21, 7 días), sin confianza baja, agrupados en incendios cuando están a 1 km o menos y a 48 horas o menos. Imágenes Sentinel-2 L2A de Microsoft Planetary Computer, elegidas por el porcentaje de píxeles válidos dentro de la zona según la capa SCL. NBR = (B8A − B12)/(B8A + B12), dNBR = NBR antes − NBR después. Umbral = el mayor entre 0,10 y el percentil 95 del dNBR a más de 3 km de los focos; mediana de 3×3 y manchas de 1 ha o más que tocan un foco (a ≤ 375 m). Severidad según Key y Benson (2006). Cobertura de ESA WorldCover 2021.</p>
+    <p class="nota">Código y datos: <a href="https://github.com/nicosil02/incendios-chacras-peru">github.com/nicosil02/incendios-chacras-peru</a></p>
+  </section>
+
+  <section class="seccion">
+    <h2>Limitaciones</h2>
+    <ul class="limites">
+      <li>Un foco de calor no es un incendio forestal: incluye quemas agrícolas y de pastos.</li>
+      <li>En cultivo, el dNBR también sube con la cosecha o el arado. Las {{cult_q}} ha de cultivo quemado son un máximo.</li>
+      <li>WorldCover es de 2021 y en la sierra confunde chacras con pastizal.</li>
+      <li>El umbral bajo puede sumar algo de secado dentro de las manchas; lo acotan el umbral sacado del fondo y que la imagen de antes es de un día antes del fuego.</li>
+    </ul>
+  </section>
+
+  <p class="etiqueta">Nicolás Silva Andújar · Ciencia de Datos con Python · octubre 2026</p>
+</main>

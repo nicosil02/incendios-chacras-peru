@@ -1,0 +1,8 @@
+clase,cobertura,quemado_ha,a_1km_sin_quemar_ha,pct_quemado
+20,Matorral,108.1,674.2,70.9
+30,Pastizal,35.3,365.2,23.2
+40,Cultivo,7.4,65.3,4.9
+60,Suelo desnudo,0.9,19.8,0.6
+50,Construido,0.4,5.4,0.3
+10,Árboles,0.3,0.2,0.2
+80,Agua,0.0,1.6,0.0
