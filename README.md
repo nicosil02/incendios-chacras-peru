@@ -66,3 +66,15 @@ En [`reel/`](reel/) este README se convierte en un reel vertical de 54 s: [`reel
 5. **Video** (`reel/video.py`): Pillow + ffmpeg, 1080×1920, mapas dNBR y WorldCover, subtítulos palabra por palabra y aviso «Voz generada con IA».
 
 Dato de contexto del guion: del 1 al 20 de octubre de 2026 hubo 12 007 focos, segundo valor desde 2012 después de 2020 ([análisis independiente](https://github.com/av-gomez/incendios-peru-2026), no oficial); los 12 fallecidos son cifra de Indeci.
+
+### Qué corregí del guion y por qué
+
+| Decía | Quedó | Por qué |
+|---|---|---|
+| «casi todo matorral» | «sobre todo matorral» | El matorral es el 71 %, no casi todo |
+| «nadie te dice qué se quemó» | «un mapa de focos no dice qué se quemó» | Exageraba; lo que sí sostiene el README es que la huella de un foco no es área quemada |
+| «la peor temporada de incendios desde 2020» | «una de las peores temporadas de los últimos cinco años» | El dato viene de un análisis independiente, no oficial; la frase nueva es la que los datos sostienen |
+| «fue el único con cielo limpio» | «fue el único sin nubes» | No era un error del texto: Whisper escuchó «consuelo limpio» dos veces, así que la voz clonada no lo pronunciaba bien |
+| «a 1 km del fuego» | «a un kilómetro o menos» | El README mide desde la cicatriz quemada, no desde el fuego |
+
+Además reescribí el guion completo: el primero contaba lo que hice (focos, nubes, método) y el final cuenta lo que pasó en Characato, que con el umbral clásico casi no aparece (menos de 2 ha) y medido bien son 153 ha junto a las chacras. «Más de setenta veces más» es un cálculo mío (153 / 2), por eso `verificar_guion.py` lo marca con ¡¡.
