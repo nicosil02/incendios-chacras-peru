@@ -57,10 +57,10 @@ python src/04_web.py
 
 ## Reel (sesión 15): del README a un video con mi voz
 
-En [`reel/`](reel/) este README se convierte en un reel vertical de 54 s: [`reel/salidas/reel.mp4`](reel/salidas/reel.mp4) (subtítulos en `reel.srt`, portada en `portada.png`, posts en [`reel/posts.md`](reel/posts.md)).
+En [`reel/`](reel/) el informe [`reel/fuente/informe.md`](reel/fuente/informe.md) (los hallazgos de este README más el contexto de la temporada, con fuentes) se convierte en un reel vertical de 54 s: [`reel/salidas/reel.mp4`](reel/salidas/reel.mp4) (subtítulos en `reel.srt`, portada en `portada.png`, posts en [`reel/posts.md`](reel/posts.md)).
 
 1. **Guion** (`reel/guion.json`): 7 escenas con frase, cifra y etiqueta.
-2. **Revisión** (`reel/verificar_guion.py`): marca con ¡¡ toda cifra que no esté tal cual en este README; las frases las revisé a mano contra `data/processed/`.
+2. **Revisión** (`reel/verificar_guion.py`): marca con ¡¡ toda cifra que no esté tal cual en el informe; las frases las revisé a mano contra `data/processed/`.
 3. **Voz** (`reel/voz.py`): Qwen3-TTS 0.6B clona mi voz desde una nota de 19 s; Whisper vuelve a escuchar cada escena y la regenera si entiende mal más del 25 % de las palabras.
 4. **Unión** (`reel/unir.py`): recorta el silencio de cada escena y normaliza a −14 LUFS.
 5. **Video** (`reel/video.py`): Pillow + ffmpeg, 1080×1920, mapas dNBR y WorldCover, subtítulos palabra por palabra y aviso «Voz generada con IA».
@@ -77,4 +77,4 @@ Dato de contexto del guion: del 1 al 20 de octubre de 2026 hubo 12 007 focos, se
 | «fue el único con cielo limpio» | «fue el único sin nubes» | No era un error del texto: Whisper escuchó «consuelo limpio» dos veces, así que la voz clonada no lo pronunciaba bien |
 | «a 1 km del fuego» | «a un kilómetro o menos» | El README mide desde la cicatriz quemada, no desde el fuego |
 
-Además reescribí el guion completo: el primero contaba lo que hice (focos, nubes, método) y el final cuenta lo que pasó en Characato, que con el umbral clásico casi no aparece (menos de 2 ha) y medido bien son 153 ha junto a las chacras. «Más de setenta veces más» es un cálculo mío (153 / 2), por eso `verificar_guion.py` lo marca con ¡¡.
+Además reescribí el guion completo: el primero contaba lo que hice (focos, nubes, método) y el final cuenta lo que pasó en Characato, que con el umbral clásico casi no aparece (menos de 2 ha) y medido bien son 153 ha junto a las chacras. «Más de setenta veces más» es un cálculo mío (152,5 ha frente a 1,7 ha, unas 90 veces); está explicado en el informe fuente.

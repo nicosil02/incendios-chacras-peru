@@ -1,6 +1,6 @@
 {
   "titulo": "¿Qué se quemó en Characato?",
-  "fuente": "README de incendios-chacras-peru (NASA FIRMS, Sentinel-2, ESA WorldCover)",
+  "fuente": "reel/fuente/informe.md (NASA FIRMS, Sentinel-2, ESA WorldCover, Indeci)",
   "escenas": [
     {
       "frase": "Esta es la historia de un incendio que el método de siempre casi no ve.",
