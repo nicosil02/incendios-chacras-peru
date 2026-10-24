@@ -6,9 +6,9 @@ import json
 import re
 from pathlib import Path
 
-RAIZ = Path(__file__).resolve().parent.parent
-fuente = (RAIZ / "reel" / "fuente" / "informe.md").read_text(encoding="utf-8")
-guion = json.loads((RAIZ / "reel" / "guion.json").read_text(encoding="utf-8"))
+REEL = Path(__file__).resolve().parent.parent
+fuente = (REEL / "informe.md").read_text(encoding="utf-8")
+guion = json.loads((REEL / "guion.json").read_text(encoding="utf-8"))
 
 # En el informe las cifras usan espacio fino o normal como separador de miles
 fuente_norm = re.sub(r"[  ]", " ", fuente)

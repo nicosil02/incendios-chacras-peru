@@ -11,7 +11,7 @@ import numpy as np
 import soundfile as sf
 from faster_whisper import WhisperModel
 
-AQUI = Path(__file__).resolve().parent
+AQUI = Path(__file__).resolve().parent.parent
 SALIDAS = AQUI / "salidas"
 FFMPEG = r"C:\Users\Nicolas Silva\Documents\ffmpeg-7.1.1-essentials_build\bin\ffmpeg.exe"
 PAUSA_S = 0.35

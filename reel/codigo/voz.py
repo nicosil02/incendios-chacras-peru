@@ -20,7 +20,7 @@ import torch
 from faster_whisper import WhisperModel
 from qwen_tts import Qwen3TTSModel
 
-AQUI = Path(__file__).resolve().parent
+AQUI = Path(__file__).resolve().parent.parent
 SALIDAS = AQUI / "salidas"
 SALIDAS.mkdir(exist_ok=True)
 FFMPEG = r"C:\Users\Nicolas Silva\Documents\ffmpeg-7.1.1-essentials_build\bin\ffmpeg.exe"

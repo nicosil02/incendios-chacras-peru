@@ -15,7 +15,7 @@ import numpy as np
 from faster_whisper import WhisperModel
 from PIL import Image, ImageDraw, ImageFont
 
-AQUI = Path(__file__).resolve().parent
+AQUI = Path(__file__).resolve().parent.parent
 SALIDAS = Path(os.environ.get("SALIDAS", AQUI / "salidas"))
 FFMPEG = r"C:\Users\Nicolas Silva\Documents\ffmpeg-7.1.1-essentials_build\bin\ffmpeg.exe"
 W, H, FPS = 1080, 1920, 30
@@ -196,7 +196,7 @@ def cuadro(seg):
 
 # Portada: la escena del área quemada, ya con la cifra completa
 i_portada = next(k for k, e in enumerate(guion["escenas"]) if e["cifra"] == "153 ha")
-cuadro_escena(i_portada, tramos[i_portada][0] + 2).save(SALIDAS / "portada.png")
+cuadro_escena(i_portada, tramos[i_portada][0] + 2).save(AQUI / "portada.png")
 if os.environ.get("SOLO_PORTADA"):
     for k in range(len(tramos)):
         cuadro(tramos[k][0] + 1.5).save(SALIDAS / f"muestra_{k + 1}.png")
@@ -207,7 +207,7 @@ ffmpeg = subprocess.Popen(
      "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-i", str(SALIDAS / "reel.wav"),
      "-c:v", "libx264", "-preset", "medium", "-crf", "23", "-pix_fmt", "yuv420p",
      "-af", "apad", "-c:a", "aac", "-b:a", "128k", "-shortest", "-movflags", "+faststart",
-     str(SALIDAS / "reel.mp4")], stdin=subprocess.PIPE)
+     str(AQUI / "reel.mp4")], stdin=subprocess.PIPE)
 for n in range(int(duracion * FPS)):
     ffmpeg.stdin.write(cuadro(n / FPS).tobytes())
 ffmpeg.stdin.close()
@@ -221,5 +221,5 @@ def srt_t(s):
 
 srt = [f"{k}\n{srt_t(b[0][0])} --> {srt_t(b[-1][1])}\n{' '.join(p[2] for p in b)}\n"
        for k, b in enumerate(bloques, 1)]
-(SALIDAS / "reel.srt").write_text("\n".join(srt), encoding="utf-8")
-print(f"Listo: salidas/reel.mp4 ({duracion:.0f} s), reel.srt y portada.png")
+(AQUI / "reel.srt").write_text("\n".join(srt), encoding="utf-8")
+print(f"Listo: reel/reel.mp4 ({duracion:.0f} s), reel.srt y portada.png")
