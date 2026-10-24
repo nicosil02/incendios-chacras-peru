@@ -1,0 +1,41 @@
+{
+  "titulo": "¿Qué se quemó en Characato?",
+  "fuente": "README de incendios-chacras-peru (NASA FIRMS, Sentinel-2, ESA WorldCover)",
+  "escenas": [
+    {
+      "frase": "Esta es la historia de un incendio que el método de siempre casi no ve.",
+      "cifra": "",
+      "etiqueta": "¿Qué se quemó en Characato?"
+    },
+    {
+      "frase": "Semana del quince al veintidós de octubre, una de las peores temporadas de incendios en el Perú de los últimos cinco años. Ya van doce muertos.",
+      "cifra": "12",
+      "etiqueta": "Fallecidos por los incendios (Indeci)"
+    },
+    {
+      "frase": "Characato, Arequipa, dieciocho de octubre. Con el umbral clásico, el satélite dice que se quemaron menos de dos hectáreas.",
+      "cifra": "2 ha",
+      "etiqueta": "Lo que mide el umbral clásico"
+    },
+    {
+      "frase": "Pero en el matorral seco hay poco verde que perder. Medido bien, ardieron ciento cincuenta y tres hectáreas, más de setenta veces más.",
+      "cifra": "153 ha",
+      "etiqueta": "Área quemada real, más de 70 veces más"
+    },
+    {
+      "frase": "El fuego no se quedó en el monte. Llegó al borde de las chacras, junto a las casas, y quemó hasta siete hectáreas de cultivo.",
+      "cifra": "7 ha",
+      "etiqueta": "Cultivo quemado (máximo)"
+    },
+    {
+      "frase": "Y a un kilómetro o menos quedan sesenta y cinco hectáreas de cultivo. Esta vez se salvaron.",
+      "cifra": "65 ha",
+      "etiqueta": "Cultivo a 1 km o menos, sin quemar"
+    },
+    {
+      "frase": "Un incendio chico en el papel puede estar al lado de tu chacra. Por eso hay que medir bien.",
+      "cifra": "",
+      "etiqueta": "NASA FIRMS · Sentinel-2 · ESA WorldCover"
+    }
+  ]
+}

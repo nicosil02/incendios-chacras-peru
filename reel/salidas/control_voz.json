@@ -1,0 +1,44 @@
+[
+  {
+    "escena": 1,
+    "intentos": 0,
+    "wer": null,
+    "segundos": 3.79
+  },
+  {
+    "escena": 2,
+    "intentos": 1,
+    "wer": 0.115,
+    "segundos": 9.52
+  },
+  {
+    "escena": 3,
+    "intentos": 1,
+    "wer": 0.105,
+    "segundos": 9.49
+  },
+  {
+    "escena": 4,
+    "intentos": 1,
+    "wer": 0.087,
+    "segundos": 9.45
+  },
+  {
+    "escena": 5,
+    "intentos": 1,
+    "wer": 0.08,
+    "segundos": 7.37
+  },
+  {
+    "escena": 6,
+    "intentos": 0,
+    "wer": null,
+    "segundos": 5.85
+  },
+  {
+    "escena": 7,
+    "intentos": 0,
+    "wer": null,
+    "segundos": 5.37
+  }
+]

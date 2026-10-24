@@ -7,3 +7,11 @@ data/cache/
 *.tif
 *.tiff
 .env
+
+# reel: voz original y salidas pesadas
+reel/mi_voz.*
+reel/.venv/
+reel/salidas/*.wav
+reel/salidas/*.txt
+reel/version1/
+reel/respaldo_*.mp4
